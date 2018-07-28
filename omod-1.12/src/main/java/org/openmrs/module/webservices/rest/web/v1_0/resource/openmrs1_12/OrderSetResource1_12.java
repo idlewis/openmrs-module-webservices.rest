@@ -12,6 +12,7 @@ package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_12;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.RefProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,11 +90,13 @@ public class OrderSetResource1_12 extends MetadataDelegatingCrudResource<OrderSe
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
 			description.addProperty("operator");
 			description.addProperty("orderSetMembers", Representation.REF);
+			description.addProperty("category", Representation.REF);
 			return description;
 		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
 			description.addProperty("operator");
 			description.addProperty("orderSetMembers", Representation.DEFAULT);
+			description.addProperty("category", Representation.REF);
 			return description;
 		} else {
 			return null;
@@ -105,6 +108,7 @@ public class OrderSetResource1_12 extends MetadataDelegatingCrudResource<OrderSe
 		DelegatingResourceDescription d = super.getCreatableProperties();
 		d.addProperty("operator");
 		d.addProperty("orderSetMembers");
+		d.addProperty("category");
 		return d;
 	}
 	
@@ -131,6 +135,7 @@ public class OrderSetResource1_12 extends MetadataDelegatingCrudResource<OrderSe
 	public Model getCREATEModel(Representation representation) {
 		return new ModelImpl()
 		        .property("operator", new EnumProperty(OrderSet.Operator.class))
+		        .property("category", new StringProperty().example("uuid"))
 		        .property("orderSetMembers",
 		            new ArrayProperty(new RefProperty("#/definitions/OrdersetOrdersetmemberCreate")));
 	}
