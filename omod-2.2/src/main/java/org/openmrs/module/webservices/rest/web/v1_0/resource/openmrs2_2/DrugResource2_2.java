@@ -7,43 +7,23 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_11;
-
-import java.util.Arrays;
-import java.util.List;
+package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 
 import org.openmrs.Drug;
-import org.openmrs.DrugIngredient;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_10.DrugResource1_10;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_0.DrugResource2_0;
 
 /**
  * {@link Resource} for {@link Drug}, supporting standard CRUD operations
  */
-@Resource(name = RestConstants.VERSION_1 + "/drug", order = 3, supportedClass = Drug.class, supportedOpenmrsVersions = {
-        "1.11.*", "1.12.*" })
-public class DrugResource1_11 extends DrugResource1_10 {
-	
-	/**
-	 * Sets ingredients on the given Drug.
-	 * 
-	 * @param instance
-	 * @param ingredients
-	 */
-	@PropertySetter("ingredients")
-	public static void setIngredients(Drug instance, List<DrugIngredient> ingredients) {
-		for (DrugIngredient ingredient : ingredients) {
-			ingredient.setDrug(instance);
-		}
-		instance.setIngredients(ingredients);
-	}
+@Resource(name = RestConstants.VERSION_1 + "/drug", order = 1, supportedClass = Drug.class, supportedOpenmrsVersions = { "2.2.*" })
+public class DrugResource2_2 extends DrugResource2_0 {
 	
 	/**
 	 * @see DelegatingCrudResource#getRepresentationDescription(Representation)
@@ -52,11 +32,11 @@ public class DrugResource1_11 extends DrugResource1_10 {
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		if (rep instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
-			description.addProperty("ingredients", Representation.REF);
+			description.addProperty("doseLimitUnits");
 			return description;
 		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
-			description.addProperty("ingredients", Representation.DEFAULT);
+			description.addProperty("doseLimitUnits");
 			return description;
 		}
 		return null;
@@ -68,23 +48,7 @@ public class DrugResource1_11 extends DrugResource1_10 {
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = super.getCreatableProperties();
-		description.addProperty("ingredients");
+		description.addProperty("doseLimitUnits");
 		return description;
-	}
-	
-	/**
-	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getPropertiesToExposeAsSubResources()
-	 */
-	@Override
-	public List<String> getPropertiesToExposeAsSubResources() {
-		return Arrays.asList("ingredients");
-	}
-	
-	/**
-	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getResourceVersion()
-	 */
-	@Override
-	public String getResourceVersion() {
-		return RestConstants1_11.RESOURCE_VERSION;
 	}
 }
