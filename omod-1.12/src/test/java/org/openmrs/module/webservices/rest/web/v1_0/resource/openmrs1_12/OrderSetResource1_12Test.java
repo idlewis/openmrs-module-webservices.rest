@@ -37,6 +37,7 @@ public class OrderSetResource1_12Test extends BaseDelegatingResourceTest<OrderSe
 		assertPropEquals("uuid", getObject().getUuid());
 		assertPropEquals("description", getObject().getDescription());
 		assertPropEquals("operator", getObject().getOperator());
+		assertPropEquals("category", getObject().getCategory());
 	}
 	
 	@Override
@@ -44,6 +45,7 @@ public class OrderSetResource1_12Test extends BaseDelegatingResourceTest<OrderSe
 		super.validateFullRepresentation();
 		assertPropEquals("name", getObject().getName());
 		assertPropEquals("description", getObject().getDescription());
+		assertPropEquals("category", getObject().getCategory());
 		assertPropEquals("retired", getObject().getRetired());
 		assertPropEquals("retireBy", getObject().getRetiredBy());
 		assertPropPresent("auditInfo");
