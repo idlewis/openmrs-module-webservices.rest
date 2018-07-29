@@ -34,39 +34,16 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#getRepresentationDescription(org.openmrs.module.webservices.rest.web.representation.Representation)
-	 * TODO fix this up
-	 * 
-	 * 
-+----------------+--------------+------+-----+---------+----------------+
-| Field          | Type         | Null | Key | Default | Extra          |
-+----------------+--------------+------+-----+---------+----------------+
-| order_group_id | int(11)      | NO   | PRI | NULL    | auto_increment |
-| order_set_id   | int(11)      | YES  | MUL | NULL    |                |
-| patient_id     | int(11)      | NO   | MUL | NULL    |                |
-| encounter_id   | int(11)      | NO   | MUL | NULL    |                |
-| creator        | int(11)      | NO   | MUL | NULL    |                |
-| date_created   | datetime     | NO   |     | NULL    |                |
-| voided         | tinyint(1)   | NO   |     | 0       |                |
-| voided_by      | int(11)      | YES  | MUL | NULL    |                |
-| date_voided    | datetime     | YES  |     | NULL    |                |
-| void_reason    | varchar(255) | YES  |     | NULL    |                |
-| changed_by     | int(11)      | YES  | MUL | NULL    |                |
-| date_changed   | datetime     | YES  |     | NULL    |                |
-| uuid           | char(38)     | NO   | UNI | NULL    |                |
-+----------------+--------------+------+-----+---------+----------------+
-
-	 * TODO add in the audit info? see the rest module docs
-	 * https://wiki.openmrs.org/display/docs/Adding+a+Web+Service+Step+by+Step+Guide+for+Core+Developers
 	 */
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
 		if (representation instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
-			description.addProperty("display");
 			description.addProperty("patient", Representation.REF);
 			description.addProperty("orderSet", Representation.REF);
 			description.addProperty("encounter", Representation.REF);
+			description.addProperty("orders", Representation.REF);
 			description.addProperty("voided");
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
@@ -74,10 +51,10 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		} else if (representation instanceof FullRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
-			description.addProperty("display");
 			description.addProperty("patient", Representation.REF);
 			description.addProperty("orderSet", Representation.REF);
 			description.addProperty("encounter", Representation.REF);
+			description.addProperty("orders", Representation.DEFAULT);
 			description.addProperty("voided");
 			description.addSelfLink();
 			return description;
@@ -90,10 +67,9 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	 * https://wiki.openmrs.org/display/docs/Documenting+REST+Resources 
 	 */
 	
-	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getCreatableProperties()
-	 * TODO fix this up may not need it
+	 *      TODO fix this up may not need it
 	 */
 	/*
 	@Override
@@ -108,25 +84,16 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getUpdatableProperties()
-	 * TODO fix this up, may not need it
-	 * 
-	/*
-	@Override
-	public DelegatingResourceDescription getUpdatableProperties() {
-		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		
-		description.addProperty("condition");
-		description.removeProperty("patient");
-		description.addProperty("clinicalStatus");
-		description.addProperty("verificationStatus");
-		description.addProperty("onsetDate");
-		description.addProperty("endDate");
-		description.addProperty("additionalDetail");
-		description.addProperty("voided");
-		
-		return description;
-	}
-	*/
+	 *      TODO fix this up, may not need it /*
+	 * @Override public DelegatingResourceDescription getUpdatableProperties() {
+	 *           DelegatingResourceDescription description = new DelegatingResourceDescription();
+	 *           description.addProperty("condition"); description.removeProperty("patient");
+	 *           description.addProperty("clinicalStatus");
+	 *           description.addProperty("verificationStatus");
+	 *           description.addProperty("onsetDate"); description.addProperty("endDate");
+	 *           description.addProperty("additionalDetail"); description.addProperty("voided");
+	 *           return description; }
+	 */
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#getByUniqueId(java.lang.String)
@@ -136,16 +103,17 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		return orderService.getOrderGroupByUuid(uuid);
 	}
 	
-	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#delete(java.lang.Object,
 	 *      java.lang.String, org.openmrs.module.webservices.rest.web.RequestContext)
 	 */
 	@Override
-	protected void delete(OrderGroup condition, String reason, RequestContext requestContext) throws ResponseException {
+	protected void delete(OrderGroup orderGroup, String reason, RequestContext requestContext) throws ResponseException {
 		throw new ResourceDoesNotSupportOperationException();
 		// TODO this probably needs to void each individual order
-		// and then void the order group itself
+		// and then void the order group itself.
+		// Or maybe it isn't needed at all. Orders are immutable, maybe order groups shouldn't
+		// be deletable
 	}
 	
 	/**
@@ -160,8 +128,8 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#save(java.lang.Object)
 	 */
 	@Override
-	public OrderGroup save(OrderGroup condition) {
-		return orderService.saveOrderGroup(condition);
+	public OrderGroup save(OrderGroup orderGroup) {
+		return orderService.saveOrderGroup(orderGroup);
 	}
 	
 	/**
@@ -173,22 +141,4 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		throw new ResourceDoesNotSupportOperationException();
 	}
 	
-	/**
-	 * @param condition - the condition to get the name of
-	 * @return condition's name
-	 * TODO FIX THIS UP.
-	 */
-	/*
-	@PropertyGetter("display")
-	public String getDisplayString(OrderGroup condition) {
-		if (condition.getCondition() == null) {
-			return "";
-		} else {
-			if (condition.getCondition().getCoded() != null)
-				return condition.getCondition().getCoded().getName().getName();
-			
-			return condition.getCondition().getNonCoded();
-		}
-	}
-	*/
 }
