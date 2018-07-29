@@ -9,19 +9,27 @@
  */
 package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 
+import java.util.List;
+
 import org.openmrs.OrderGroup;
+import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
+import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.PatientResource1_9;
 
 /**
  * {@link Resource} for OrderGroup, supporting standard CRUD operations
@@ -140,5 +148,37 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	public void purge(OrderGroup orderGroup, RequestContext requestContext) throws ResponseException {
 		throw new ResourceDoesNotSupportOperationException();
 	}
+	
+	/**
+	 * Gets orders by given patient (paged according to context if necessary) only if a patient
+	 * parameter exists in the request set on the {@link RequestContext}, optional careSetting,
+	 * asOfDate request parameters can be specified to filter on
+	 * 
+	 * @param context
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
+	 * @return all orders for a given patient (possibly filtered by context.type)
+	 */
+	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		String patientUuid = context.getRequest().getParameter("patient");
+		if (patientUuid != null) {
+			return new EmptySearchResult();
+		}
+		
+		// TODO URK this cast is nasty, and is it correct?
+		Patient patient = ((PatientResource1_9) Context.getService(RestService.class).getResourceBySupportedClass(
+		    Patient.class)).getByUniqueId(patientUuid);
+		if (patient == null) {
+			return new EmptySearchResult();
+		}
+
+		// TODO carry on from here!!!!!!!!!!!
+		
+		List<OrderGroup> groups = Context.getOrderService().getOrderGroupsByPatient(patient);
+		
+		return new NeedsPaging<OrderGroup>(groups, context);
+
+	}
+
 	
 }
