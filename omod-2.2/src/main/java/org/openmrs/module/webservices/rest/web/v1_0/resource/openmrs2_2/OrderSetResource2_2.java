@@ -31,7 +31,6 @@ import io.swagger.models.properties.StringProperty;
 @Resource(name = RestConstants.VERSION_1 + "/orderset", supportedClass = OrderSet.class, supportedOpenmrsVersions = { "2.2.*" })
 public class OrderSetResource2_2 extends OrderSetResource1_12 {
 	
-	
 	/**
 	 * Sets attributes on the given OrderSet.
 	 * 
@@ -44,7 +43,7 @@ public class OrderSetResource2_2 extends OrderSetResource1_12 {
 			instance.addAttribute(attr);
 		}
 	}
-  
+	
 	/**
 	 * @see DelegatingCrudResource#getRepresentationDescription(Representation)
 	 */
@@ -53,12 +52,12 @@ public class OrderSetResource2_2 extends OrderSetResource1_12 {
 		if (rep instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
 			description.addProperty("category", Representation.REF);
-      description.addProperty("attributes", Representation.REF);
+			description.addProperty("attributes", Representation.REF);
 			return description;
 		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = super.getRepresentationDescription(rep);
 			description.addProperty("category", Representation.REF);
-      description.addProperty("attributes", Representation.DEFAULT);
+			description.addProperty("attributes", Representation.DEFAULT);
 			return description;
 		}
 		return null;
@@ -70,8 +69,8 @@ public class OrderSetResource2_2 extends OrderSetResource1_12 {
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = super.getCreatableProperties();
-		description.addProperty("category");
 		description.addProperty("attributes");
+		description.addProperty("category");
 		return description;
 	}
 	
