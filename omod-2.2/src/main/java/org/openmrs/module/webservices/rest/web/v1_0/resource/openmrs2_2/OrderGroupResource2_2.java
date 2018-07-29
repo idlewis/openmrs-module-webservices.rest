@@ -11,12 +11,14 @@ package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 
 import java.util.List;
 
+import org.openmrs.Order;
 import org.openmrs.OrderGroup;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -53,6 +55,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("encounter", Representation.REF);
 			description.addProperty("orders", Representation.REF);
 			description.addProperty("voided");
+			description.addProperty("display");
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
@@ -64,6 +67,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("encounter", Representation.REF);
 			description.addProperty("orders", Representation.DEFAULT);
 			description.addProperty("voided");
+			description.addProperty("display");
 			description.addSelfLink();
 			return description;
 		}
@@ -161,7 +165,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
 		String patientUuid = context.getRequest().getParameter("patient");
-		if (patientUuid != null) {
+		if (patientUuid == null) {
 			return new EmptySearchResult();
 		}
 		
@@ -171,14 +175,25 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		if (patient == null) {
 			return new EmptySearchResult();
 		}
-
-		// TODO carry on from here!!!!!!!!!!!
 		
 		List<OrderGroup> groups = Context.getOrderService().getOrderGroupsByPatient(patient);
 		
 		return new NeedsPaging<OrderGroup>(groups, context);
-
+		
 	}
-
+	
+	/**
+	 * Display string for {@link OrderGroup}
+	 * 
+	 * @param orderGroup
+	 * @return ConceptName
+	 */
+	@PropertyGetter("display")
+	public String getDisplayString(OrderGroup orderGroup) {
+		// TODO this seems te be required for paging, but there is no obvious
+		// field at the moment which we can use for something meaningful. Could aggregate
+		// all the order concepts I suppose?
+		return null;
+	}
 	
 }
