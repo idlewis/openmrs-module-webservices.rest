@@ -8,6 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,10 +22,11 @@ import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttributeTypeCrudResource1_9;
+
 /**
  * Allows standard CRUD for the {@link OrderGroupAttributeType} domain object
  */
-@Resource(name = RestConstants.VERSION_1 + "/ordersetattributetype", supportedClass = OrderGroupAttributeType.class, supportedOpenmrsVersions = {"2.2.*" })
+@Resource(name = RestConstants.VERSION_1 + "/ordergroupattributetype", supportedClass = OrderGroupAttributeType.class, supportedOpenmrsVersions = { "2.2.*" })
 public class OrderGroupAttributeTypeResource2_2 extends BaseAttributeTypeCrudResource1_9<OrderGroupAttributeType> {
 	
 	public OrderGroupAttributeTypeResource2_2() {
