@@ -10,7 +10,9 @@
 package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 
 import java.util.List;
+import java.util.Set;
 
+import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.OrderGroup;
 import org.openmrs.Patient;
@@ -19,6 +21,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
+import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -74,6 +77,14 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		return null;
 	}
 	
+	@PropertySetter("orders")
+	public static void setOrders(OrderGroup instance, Set<Order> orders) {
+		// TODO These should possibly get added with a position of the order
+		// currently has one
+		for (Order o : orders)
+			instance.addOrder(o);
+	}
+	
 	/*
 	 * TODO add the swagger documentation methods 
 	 * https://wiki.openmrs.org/display/docs/Documenting+REST+Resources 
@@ -81,30 +92,27 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getCreatableProperties()
-	 *      TODO fix this up may not need it
+	 *      TODO This probably needs orders added, and also patient should come from the encounter
 	 */
-	/*
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		
-		description.addProperty("patient");
-		
+		description.addProperty("encounter");
 		return description;
 	}
-	*/
 	
 	/**
 	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getUpdatableProperties()
-	 *      TODO fix this up, may not need it /*
-	 * @Override public DelegatingResourceDescription getUpdatableProperties() {
+	 *      TODO fix this up, may not need it
+	 */
+	/*
+	 * @Override 
+	 * public DelegatingResourceDescription getUpdatableProperties() {
 	 *           DelegatingResourceDescription description = new DelegatingResourceDescription();
-	 *           description.addProperty("condition"); description.removeProperty("patient");
-	 *           description.addProperty("clinicalStatus");
-	 *           description.addProperty("verificationStatus");
-	 *           description.addProperty("onsetDate"); description.addProperty("endDate");
-	 *           description.addProperty("additionalDetail"); description.addProperty("voided");
-	 *           return description; }
+	 *           description.addProperty("condition"); 
+	 *           description.removeProperty("patient");
+	 *           return description; 
+	 * }
 	 */
 	
 	/**
