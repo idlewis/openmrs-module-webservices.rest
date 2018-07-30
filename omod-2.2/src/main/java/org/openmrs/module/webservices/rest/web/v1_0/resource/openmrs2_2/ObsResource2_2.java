@@ -39,27 +39,6 @@ public class ObsResource2_2 extends ObsResource2_1 {
 	 */
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		//		String patientUuid = context.getRequest().getParameter("patient");
-		//		if (patientUuid != null) {
-		//			Patient patient = ((PatientResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
-		//			    Patient.class)).getByUniqueId(patientUuid);
-		//			if (patient == null)
-		//				return new EmptySearchResult();
-		//			List<Obs> obs = Context.getObsService().getObservationsByPerson(patient);
-		//			return new NeedsPaging<Obs>(obs, context);
-		//		}
-		//		
-		//		String encounterUuid = context.getRequest().getParameter("encounter");
-		//		if (encounterUuid != null) {
-		//			Encounter enc = ((EncounterResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
-		//			    Encounter.class)).getByUniqueId(encounterUuid);
-		//			if (enc == null)
-		//				return new EmptySearchResult();
-		//			
-		//			List<Obs> obs = new ArrayList<Obs>(enc.getAllObs(context.getIncludeAll()));
-		//			return new NeedsPaging<Obs>(obs, context);
-		//		}
-		
 		String orderUuid = context.getRequest().getParameter("order");
 		if (orderUuid != null) {
 			Order ord = ((OrderResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
