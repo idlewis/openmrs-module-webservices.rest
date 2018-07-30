@@ -12,7 +12,6 @@ package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 import java.util.List;
 import java.util.Set;
 
-import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.OrderGroup;
 import org.openmrs.Patient;
@@ -59,6 +58,9 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("orders", Representation.REF);
 			description.addProperty("voided");
 			description.addProperty("display");
+			description.addProperty("orderGroupReason");
+			description.addProperty("parentOrderGroup", Representation.REF);
+			description.addProperty("previousOrderGroup", Representation.REF);
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
@@ -71,6 +73,9 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("orders", Representation.DEFAULT);
 			description.addProperty("voided");
 			description.addProperty("display");
+			description.addProperty("orderGroupReason");
+			description.addProperty("parentOrderGroup", Representation.REF);
+			description.addProperty("previousOrderGroup", Representation.REF);
 			description.addSelfLink();
 			return description;
 		}
@@ -103,6 +108,8 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		description.addRequiredProperty("orders");
 		// TODO 'encounter' is a required property on order, but it should really come from the
 		// encounter
+		description.addProperty("orderGroupReason");
+		description.addProperty("previousOrderGroup");
 		return description;
 	}
 	
@@ -156,6 +163,14 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	public OrderGroup save(OrderGroup orderGroup) {
 		// TODO should this fail if the number of orders is 0?
 		// seems odd to have an empty order group
+		// validation on the new fields
+		// orderGroupReason doesn't have a useful subset, so we can't limit it to anything other than concept
+		// parentOrderGroup needs to be set in the service
+		// previousOrderGroup should be an order group, but we can't check that
+		/*			description.addProperty("orderGroupReason");
+		            description.addProperty("parentOrderGroup", Representation.REF);
+		            description.addProperty("previousOrderGroup", Representation.REF);
+		*/
 		return orderService.saveOrderGroup(orderGroup);
 	}
 	
