@@ -97,7 +97,12 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addProperty("encounter");
+		description.addRequiredProperty("encounter");
+		description.addRequiredProperty("orderSet"); // TODO how do I make this fail if it is invalid
+		// this is an OrderSet property on OrderGroup, so the resource needs to check it
+		description.addRequiredProperty("orders");
+		// TODO 'encounter' is a required property on order, but it should really come from the
+		// encounter
 		return description;
 	}
 	
@@ -149,6 +154,8 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	 */
 	@Override
 	public OrderGroup save(OrderGroup orderGroup) {
+		// TODO should this fail if the number of orders is 0?
+		// seems odd to have an empty order group
 		return orderService.saveOrderGroup(orderGroup);
 	}
 	
