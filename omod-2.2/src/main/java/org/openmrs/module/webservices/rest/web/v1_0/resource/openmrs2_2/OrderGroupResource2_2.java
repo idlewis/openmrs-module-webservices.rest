@@ -31,6 +31,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.module.webservices.rest.web.response.ConversionException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.PatientResource1_9;
@@ -61,6 +62,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("orderGroupReason");
 			description.addProperty("parentOrderGroup", Representation.REF);
 			description.addProperty("previousOrderGroup", Representation.REF);
+			description.addProperty("nestedOrderGroups", Representation.REF);
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
@@ -76,6 +78,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("orderGroupReason");
 			description.addProperty("parentOrderGroup", Representation.REF);
 			description.addProperty("previousOrderGroup", Representation.REF);
+			description.addProperty("nestedOrderGroups", Representation.FULL);
 			description.addSelfLink();
 			return description;
 		}
@@ -103,13 +106,15 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("encounter");
-		description.addRequiredProperty("orderSet"); // TODO how do I make this fail if it is invalid
+		description.addProperty("orderSet"); // TODO how do I make this fail if it is invalid
 		// this is an OrderSet property on OrderGroup, so the resource needs to check it
-		description.addRequiredProperty("orders");
+		description.addRequiredProperty("orders"); // TODO this will be empty for a parent
+		// order group so it can't be required, but maybe the service should check for empty ones
 		// TODO 'encounter' is a required property on order, but it should really come from the
 		// encounter
 		description.addProperty("orderGroupReason");
 		description.addProperty("previousOrderGroup");
+		description.addProperty("nestedOrderGroups");
 		return description;
 	}
 	
@@ -220,10 +225,36 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 	 */
 	@PropertyGetter("display")
 	public String getDisplayString(OrderGroup orderGroup) {
-		// TODO this seems te be required for paging, but there is no obvious
+		// TODO this seems to be required for paging, but there is no obvious
 		// field at the moment which we can use for something meaningful. Could aggregate
 		// all the order concepts I suppose?
 		return null;
+	}
+	
+	/**
+	 * Returns null if there are no nested groups
+	 */
+	@PropertyGetter("nestedOrderGroups")
+	public static Object getNestedMembers(OrderGroup orderGroup) throws ConversionException {
+		if (orderGroup.getNestedOrderGroups() != null &&
+		        orderGroup.getNestedOrderGroups().size() > 0) {
+			return orderGroup.getNestedOrderGroups();
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the members of the nestedOrderGroups
+	 * 
+	 * @param obsGroup the obs group whose members to set
+	 * @param members the members to set
+	 */
+	@PropertySetter("nestedOrderGroups")
+	public static void setNestedMembers(OrderGroup orderGroup, Set<OrderGroup> members) {
+		for (OrderGroup member : members) {
+			member.setParentOrderGroup(orderGroup);
+		}
+		orderGroup.setNestedOrderGroups(members);
 	}
 	
 }
