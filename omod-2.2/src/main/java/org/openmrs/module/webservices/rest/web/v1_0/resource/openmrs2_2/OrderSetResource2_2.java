@@ -45,6 +45,14 @@ public class OrderSetResource2_2 extends OrderSetResource1_12 {
 	}
 	
 	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getUpdatableProperties()
+	 */
+	@Override
+	public DelegatingResourceDescription getUpdatableProperties() {
+		return getCreatableProperties();
+	}
+	
+	/**
 	 * @see DelegatingCrudResource#getRepresentationDescription(Representation)
 	 */
 	@Override
