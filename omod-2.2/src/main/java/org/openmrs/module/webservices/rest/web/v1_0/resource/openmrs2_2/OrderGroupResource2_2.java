@@ -9,11 +9,13 @@
  */
 package org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs2_2;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.openmrs.Order;
 import org.openmrs.OrderGroup;
+import org.openmrs.OrderGroupAttribute;
 import org.openmrs.Patient;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
@@ -63,6 +65,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("parentOrderGroup", Representation.REF);
 			description.addProperty("previousOrderGroup", Representation.REF);
 			description.addProperty("nestedOrderGroups", Representation.REF);
+			description.addProperty("attributes", Representation.REF);
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
@@ -79,6 +82,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("parentOrderGroup", Representation.REF);
 			description.addProperty("previousOrderGroup", Representation.REF);
 			description.addProperty("nestedOrderGroups", Representation.FULL);
+			description.addProperty("attributes", Representation.FULL);
 			description.addSelfLink();
 			return description;
 		}
@@ -115,6 +119,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 		description.addProperty("orderGroupReason");
 		description.addProperty("previousOrderGroup");
 		description.addProperty("nestedOrderGroups");
+		description.addProperty("attributes");
 		return description;
 	}
 	
@@ -255,6 +260,35 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			member.setParentOrderGroup(orderGroup);
 		}
 		orderGroup.setNestedOrderGroups(members);
+	}
+	
+	/**
+	 * Sets attributes on the given OrderGroup.
+	 * 
+	 * @param instance
+	 * @param attrs
+	 */
+	@PropertySetter("attributes")
+	public static void setAttributes(OrderGroup instance, List<OrderGroupAttribute> attrs) {
+		for (OrderGroupAttribute attr : attrs) {
+			instance.addAttribute(attr);
+		}
+	}
+	
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getPropertiesToExposeAsSubResources()
+	 */
+	@Override
+	public List<String> getPropertiesToExposeAsSubResources() {
+		return Arrays.asList("attributes");
+	}
+	
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getResourceVersion()
+	 */
+	@Override
+	public String getResourceVersion() {
+		return "2.2";
 	}
 	
 }
