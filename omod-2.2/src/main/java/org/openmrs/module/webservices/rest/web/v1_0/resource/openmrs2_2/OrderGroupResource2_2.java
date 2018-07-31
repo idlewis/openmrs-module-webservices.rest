@@ -59,7 +59,7 @@ public class OrderGroupResource2_2 extends DataDelegatingCrudResource<OrderGroup
 			description.addProperty("orders", Representation.REF);
 			description.addProperty("voided");
 			description.addProperty("display");
-			description.addProperty("orderGroupReason");
+			description.addProperty("orderGroupReason", Representation.REF);
 			description.addProperty("parentOrderGroup", Representation.REF);
 			description.addProperty("previousOrderGroup", Representation.REF);
 			description.addProperty("nestedOrderGroups", Representation.REF);
