@@ -311,6 +311,7 @@ public class ConversionUtil {
 		}
 		
 		// If the converter is a resource handler use the order of properties of its default representation
+		Set<String> alreadySet = new HashSet<String>();
 		if (converter instanceof DelegatingResourceHandler) {
 			
 			DelegatingResourceHandler handler = (DelegatingResourceHandler) converter;
@@ -320,6 +321,7 @@ public class ConversionUtil {
 			if (resDesc != null) {
 				for (Map.Entry<String, Property> prop : resDesc.getProperties().entrySet()) {
 					if (map.containsKey(prop.getKey()) && !RestConstants.PROPERTY_FOR_TYPE.equals(prop.getKey())) {
+						alreadySet.add(prop.getKey());
 						converter.setProperty(ret, prop.getKey(), map.get(prop.getKey()));
 					}
 				}
@@ -329,6 +331,9 @@ public class ConversionUtil {
 		for (Map.Entry<String, ?> prop : map.entrySet()) {
 			if (RestConstants.PROPERTY_FOR_TYPE.equals(prop.getKey()))
 				continue;
+			if (alreadySet.contains(prop.getKey())) {
+				continue;
+			}
 			converter.setProperty(ret, prop.getKey(), prop.getValue());
 		}
 		return ret;
